@@ -22,13 +22,7 @@ GPT-2 monolingual surprisal (`c_mono`) and six attention-derived features.
   scale fit is retained as a sensitivity check.
 - **RQ3:** FFD, GD, go-past time, and conditional RRT are interpreted jointly
   as coefficient and held-out temporal profiles. TFD is repeated only as the
-  RQ1 aggregate reference. RQ3 does not use sign-flip p-values or Holm
-  adjustment.
-
-The former neighbouring-word analysis, RQ2 predictive ladders, position
-ablation, and historical frequentist/LOO prototypes are not part of the final
-dissertation and have been removed. Their history remains available through
-Git.
+  RQ1 aggregate reference.
 
 ## Repository layout
 
