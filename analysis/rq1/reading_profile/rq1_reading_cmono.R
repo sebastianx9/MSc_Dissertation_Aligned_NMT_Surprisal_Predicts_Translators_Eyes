@@ -1,8 +1,7 @@
 #!/usr/bin/env Rscript
 
 # RQ1 supplementary oral-reading profile: c_mono versus the full control
-# baseline used throughout the dissertation. The removed position-ablation
-# branch is intentionally not part of the reported analysis.
+# baseline used throughout the dissertation. 
 
 suppressPackageStartupMessages({
   library(brms)
