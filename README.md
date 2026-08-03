@@ -10,7 +10,7 @@ surprisal for Marian's generated Czech tokens is distributed over English
 source words using normalised cross-attention. The analyses compare it with
 GPT-2 monolingual surprisal (`c_mono`) and six attention-derived features.
 
-## Final analysis scope
+## Analysis Objectives
 
 - **RQ1:** translation-stage TFD coefficient model; eight candidate-versus-
   baseline predictive comparisons; direct and joint comparisons of `c_nmt`
