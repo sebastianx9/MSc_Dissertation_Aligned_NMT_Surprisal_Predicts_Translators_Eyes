@@ -1,0 +1,309 @@
+# Aligned NMT surprisal and source-text eye movements
+
+Code for an MSc dissertation examining whether neural machine translation
+(NMT) signals predict English source-word viewing during English-to-Czech
+sight translation. Eye-tracking data come from the EMMT corpus
+(Bhattacharya et al., 2022).
+
+The dissertation introduces **aligned NMT surprisal** (`c_nmt`): decoder
+surprisal for Marian's generated Czech tokens is distributed over English
+source words using normalised cross-attention. The analyses compare it with
+GPT-2 monolingual surprisal (`c_mono`) and six attention-derived features.
+
+## Final analysis scope
+
+- **RQ1:** translation-stage TFD coefficient model; eight candidate-versus-
+  baseline predictive comparisons; direct and joint comparisons of `c_nmt`
+  and `c_mono`; alignment-mass and within-sentence construct checks; and a
+  supplementary oral-reading predictive profile.
+- **RQ2 (exploratory):** a pooled reading/translation joint model estimates
+  `condition × c_nmt`; a matched held-out comparison asks whether a
+  stage-specific `c_nmt` slope improves prediction. A stage-specific residual-
+  scale fit is retained as a sensitivity check.
+- **RQ3:** FFD, GD, go-past time, and conditional RRT are interpreted jointly
+  as coefficient and held-out temporal profiles. TFD is repeated only as the
+  RQ1 aggregate reference. RQ3 does not use sign-flip p-values or Holm
+  adjustment.
+
+The former neighbouring-word analysis, RQ2 predictive ladders, position
+ablation, and historical frequentist/LOO prototypes are not part of the final
+dissertation and have been removed. Their history remains available through
+Git.
+
+## Repository layout
+
+```text
+analysis/
+  shared/                 fold, clustering, hashing, and sensitivity helpers
+  rq1/                    RQ1 primary models
+    reading_profile/      supplementary oral-reading comparisons
+    robustness/           alignment-mass/stoplight and within-between checks
+  rq2/                    pooled stage model and interaction CV
+    robustness/           stage-specific residual-scale check
+  rq3/                    outcome-profile models and long coefficient refits
+  figures/                result figures used in the dissertation
+  characterisation/       copy screening, POS summaries, and word examples
+extraction/
+  eye_tracking/           trial-level line correction and eye measures
+  predictors/             NMT, GPT-2, alignment-mass, and attention features
+  figures/                stimulus and model-mechanism illustrations
+config/                    analysis registry and documented copy-error scan
+hpc/                      CSF3 installation, checking, fitting, and diagnostics
+tests/                    extraction, design, registry, and submission tests
+assets/fonts/             pinned Free Sans Bold font used for word regions
+```
+
+## Frozen inputs
+
+The EMMT corpus is not redistributed. The final input snapshot contains:
+
+```text
+attention_features_6_norm.csv
+eye_measures_word.csv
+eye_measures_word_line_diagnostics.csv
+fixation_durations_word.csv
+fixation_durations_word_line_diagnostics.csv
+monolingual_surprisal_word.csv
+nmt_alignment_mass_word.csv
+nmt_surprisal_soft_word.csv
+subtlex_us.csv
+MANIFEST.sha256
+```
+
+The final line-corrected derived files contain 19,857 fixated-word rows from
+40 participants: 10,751 oral-reading rows and 9,106 sight-translation rows.
+After the common predictor and artefact exclusions, the analysis samples are
+9,047 rows for RQ1/RQ3 and 19,732 rows for pooled RQ2; go-past and conditional
+RRT use 4,851 and 4,789 rows, respectively.
+
+P38 has no released gaze samples. P10 and P14 have raw samples but no
+trial-stage with sufficient sentence-wide evidence for reliable word mapping.
+S031/S032 remain distinct sentence random-effect levels but form one
+sentence-template fold and inference cluster because they are near-duplicate
+items. A matched sensitivity analysis excludes both.
+
+## Feature extraction
+
+Create the pinned Python environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m spacy download en_core_web_lg
+```
+
+Eye measures:
+
+```bash
+python extraction/eye_tracking/extract_fixation_duration.py \
+  --read_dir /path/to/EMMT/preprocessed-data/gaze/Read \
+  --translate_dir /path/to/EMMT/preprocessed-data/gaze/Translate \
+  --sentences /path/to/EMMT/probes/Sentences.csv \
+  --output /path/to/data/fixation_durations_word.csv
+
+python extraction/eye_tracking/extract_eye_measures.py \
+  --read_dir /path/to/EMMT/preprocessed-data/gaze/Read \
+  --translate_dir /path/to/EMMT/preprocessed-data/gaze/Translate \
+  --sentences /path/to/EMMT/probes/Sentences.csv \
+  --output /path/to/data/eye_measures_word.csv
+```
+
+Predictors:
+
+```bash
+python extraction/predictors/extract_nmt_surprisal.py \
+  --sentences /path/to/EMMT/probes/Sentences.csv \
+  --output /path/to/data/nmt_surprisal_soft_word.csv
+
+python extraction/predictors/extract_nmt_alignment_mass.py \
+  --sentences /path/to/EMMT/probes/Sentences.csv \
+  --output /path/to/data/nmt_alignment_mass_word.csv
+
+python extraction/predictors/extract_attention_features.py \
+  --sentences /path/to/EMMT/probes/Sentences.csv \
+  --output /path/to/data/attention_features_6_norm.csv
+
+python extraction/predictors/extract_monolingual_surprisal.py \
+  --sentences /path/to/EMMT/probes/Sentences.csv \
+  --output /path/to/data/monolingual_surprisal_word.csv
+```
+
+The pinned model revisions are:
+
+- `Helsinki-NLP/opus-mt-en-cs`:
+  `2820c6a540ddc2b7c4ea4c95c39b3150bd3ac27e`
+- `gpt2`: `607a30d783dfa663caf39e06633721c8d4cfcd7e`
+
+The six attention features adapt Lim et al.'s `src_seq_att` construction at
+commit `2265d5c`, using the same four-beam Marian output as the other
+NMT-derived predictors.
+
+### Eye-movement reconstruction
+
+Timestamp fields are parsed on colons because EMMT times are not consistently
+zero-padded. Fixation bouts shorter than 20 ms are removed before word-level
+aggregation. For each trial-stage, a robust, potentially tilted text line is
+estimated from bouts distributed across the rendered sentence. Weak
+translation fits may use the immediately preceding reading slope as a fixed
+geometric prior; rejected trials do not fall back to a fixed screen-y window.
+
+Each extractor writes a matching `*_line_diagnostics.csv`. The two final
+extractors agree exactly on word keys and TFD. Go-past time is derived from the
+ordered bout stream and remains missing when no recoverable rightward crossing
+is observed. RRT is conditional on a later revisit; the probability of
+re-reading is not modelled.
+
+## Analysis entry points
+
+`config/analyses.tsv` is the authoritative mapping used by both the CSF runner
+and the preflight check. The principal entries are:
+
+| Registry key | Purpose |
+|---|---|
+| `rq1_coef` | RQ1 full-data focal-slope coefficient model |
+| `rq1_cv` | eight candidate-versus-baseline comparisons |
+| `rq1_joint_predictive` | direct and reciprocal joint-surprisal contrasts |
+| `rq1_robustness` | alignment-mass and stoplight checks |
+| `rq1_within_between` | sentence-mean/within-sentence coefficient check |
+| `rq1_reading_*` | supplementary oral-reading predictive profile |
+| `rq2_joint` | pooled stage-interaction coefficient model |
+| `rq2_interaction_cv` | common versus stage-specific `c_nmt` slope |
+| `rq2_stage_sigma` | stage-specific residual-scale sensitivity |
+| `rq3_cv` | four-outcome held-out and coefficient profiles |
+| `rq3_coefficient_long_refit` | final longer FFD/GD coefficient fits |
+
+All analysis scripts accept `--data-dir`, `--output-dir`, and
+`--exclude-contrastive`. Model caches are stored under `DATA_DIR/brm_cache`;
+their established filenames are preserved for the final coefficient and CV
+fits.
+
+## CSF3 workflow
+
+After installing the R packages through `hpc/csf3_install_packages.sbatch`,
+run the preflight against a manifest-verified input directory:
+
+```bash
+cd ~/dissertation-analysis
+export DISSERTATION_DATA_DIR="$HOME/Dissertation_Data_linecorrected_lim6_20260721"
+export DISSERTATION_OUTPUT_DIR="$DISSERTATION_DATA_DIR/results"
+export EXPECTED_GIT_COMMIT="$(git rev-parse HEAD)"
+export EXPECTED_MANIFEST_SHA256="$(sha256sum "$DISSERTATION_DATA_DIR/MANIFEST.sha256" | awk '{print $1}')"
+
+sbatch --export=ALL,DISSERTATION_REPO_DIR="$PWD" hpc/csf3_check.sbatch
+```
+
+After a successful preflight:
+
+```bash
+hpc/submit_core_jobs.sh "$DISSERTATION_DATA_DIR" "$DISSERTATION_OUTPUT_DIR"
+```
+
+The submission graph includes the reported primary analyses, the matched
+leave-pair-out refits, final RQ3 long refits, stage-sigma sensitivity, sampling
+diagnostics, and model-assumption checks. Every job verifies the Git commit and
+input manifest before running.
+
+## Figures and linguistic characterisation
+
+Figure scripts write the exact filenames referenced by the dissertation. For
+example:
+
+```bash
+export DISSERTATION_DATA_DIR=/path/to/frozen-inputs
+export DISSERTATION_RESULTS_DIR="$DISSERTATION_DATA_DIR/results"
+export DISSERTATION_FIGURE_DIR=/path/to/figures
+
+Rscript analysis/figures/plot_rq1_predictor_comparison.R
+Rscript analysis/figures/plot_rq2_pairplot.R \
+  --data-dir="$DISSERTATION_DATA_DIR" \
+  --output-dir="$DISSERTATION_FIGURE_DIR"
+Rscript analysis/figures/plot_rq3_phase_profile.R \
+  --results-dir="$DISSERTATION_RESULTS_DIR" \
+  --fit-dir="$DISSERTATION_DATA_DIR/brm_cache" \
+  --output-dir="$DISSERTATION_FIGURE_DIR"
+```
+
+The descriptive linguistic characterisation uses one row per unique source
+position, not eye-movement observation counts:
+
+```bash
+python analysis/characterisation/summarise_cnmt_pos.py \
+  --data-dir "$DISSERTATION_DATA_DIR" \
+  --output-dir "$DISSERTATION_RESULTS_DIR/characterisation" \
+  --spacy-model en_core_web_lg
+
+Rscript analysis/characterisation/select_cnmt_examples.R \
+  "$DISSERTATION_RESULTS_DIR/characterisation/rq1_cnmt_pos.csv" \
+  "$DISSERTATION_RESULTS_DIR/characterisation" 15
+
+python analysis/characterisation/inspect_cnmt_examples.py \
+  --input "$DISSERTATION_RESULTS_DIR/characterisation/rq1_cnmt_pos.csv" \
+  --output "$DISSERTATION_RESULTS_DIR/characterisation/rq1_cnmt_example_details.csv" \
+  --token-output "$DISSERTATION_RESULTS_DIR/characterisation/rq1_cnmt_example_token_decomposition.csv"
+
+python analysis/characterisation/plot_cnmt_construct.py \
+  --input "$DISSERTATION_RESULTS_DIR/characterisation/rq1_cnmt_pos.csv" \
+  --output "$DISSERTATION_FIGURE_DIR/rq2_cnmt_construct.pdf"
+
+Rscript analysis/characterisation/screen_cnmt_copy_failures.R \
+  --data-dir="$DISSERTATION_DATA_DIR" \
+  --output-dir="$DISSERTATION_FIGURE_DIR"
+```
+
+The copy-error screen defaults to the documented manual scan in
+`config/copy_failures_full_scan.csv`; `--copy-scan=PATH` can replace it.
+
+Selected cases illustrate where `c_nmt` and `c_mono` diverge. They are not
+item-level tests of fixation difficulty; behavioural validation comes from the
+aggregate mixed-effects and held-out analyses.
+
+## Final result snapshot
+
+- RQ1: `c_nmt` versus controls, ΔELPD = **+18.12**, clustered SE = 6.67,
+  Holm-adjusted p = .032. The direct `c_nmt − c_mono` comparison was unresolved
+  (+5.33, SE = 6.10, two-tailed p = .370). Adding `c_nmt` beyond `c_mono`
+  yielded +13.35 (SE = 5.35, Holm-adjusted p = .011).
+- Oral-reading profile: `c_mono` gained +19.05 and `c_nmt` +4.39 over the
+  shared full baseline; the direct contrast favoured `c_mono` (−14.66).
+- RQ2: `condition × c_nmt` = **0.031**, 95% CrI [0.001, 0.061]. The matched
+  held-out stage-specific comparison was −0.37 (SE = 1.96), so moderation is
+  treated as tentative.
+- RQ3 coefficient profile: FFD −0.006, GD +0.001, go-past +0.022, conditional
+  RRT +0.057 [0.028, 0.085]. Held-out gains were −0.98, −1.29, +0.19, and
+  +10.70, respectively. These are interpreted as a profile, not formal
+  pairwise tests among outcomes.
+
+## Statistical and computational contract
+
+- Grouped 10-fold CV holds out complete sentence templates. S031/S032 are
+  bound together; mixed models retain all 200 original sentence IDs.
+- Pointwise held-out log predictive densities are summed to ΔELPD. Standard
+  errors aggregate pointwise differences within the same sentence-template
+  clusters used for CV.
+- RQ1 and RQ2 defined model-comparison families use 10,000 group-level
+  sign-flip assignments with `(b + 1) / (B + 1)`. RQ3 uses estimates and
+  clustered intervals descriptively.
+- Full-data coefficient models contain focal participant and sentence random
+  slopes. Predictive model pairs use identical participant and sentence random
+  intercepts so a gain does not conflate predictor addition with a change in
+  random-effects structure.
+- Sentence-held-out CV evaluates new sentences for participants represented in
+  training, not new participants.
+
+Final CSF fits use R 4.4.1 with `brms` 2.23.0, `dplyr` 1.2.1, `loo` 2.10.0,
+and `posterior` 1.7.0. The batch logs record the complete R session, Git commit,
+input hashes, folds, and random seeds.
+
+## Tests
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s tests -p 'test_*.py' -v
+
+Rscript tests/test_analysis_design.R
+
+for file in hpc/*.sh hpc/*.sbatch; do
+  bash -n "$file" || exit 1
+done
+```

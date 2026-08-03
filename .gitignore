@@ -1,0 +1,35 @@
+# EMMT corpus and derived data (not redistributed)
+*.csv.gz
+raw-data/
+emmt/
+brm_cache/
+results/
+figures/generated/
+*.rds
+*.out
+*.err
+slurm-*.log
+MANIFEST.sha256
+attention_features_6_norm.csv
+eye_measures_word.csv
+eye_measures_word_line_diagnostics.csv
+fixation_durations_word.csv
+fixation_durations_word_line_diagnostics.csv
+monolingual_surprisal_word.csv
+nmt_alignment_mass_word.csv
+nmt_surprisal_soft_word.csv
+subtlex_us.csv
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+Rplots.pdf
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS
+.DS_Store

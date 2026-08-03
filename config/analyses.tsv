@@ -1,0 +1,15 @@
+analysis	script	fixed_args
+rq1_coef	analysis/rq1/rq1_coef_maximal.R
+rq1_cv	analysis/rq1/rq1_kfold_elpd.R
+rq1_joint_predictive	analysis/rq1/rq1_joint_surprisal_kfold.R
+rq1_robustness	analysis/rq1/robustness/rq1_mass_stoplight_robustness.R
+rq1_within_between	analysis/rq1/robustness/rq1_within_between.R
+rq1_reading_cmono	analysis/rq1/reading_profile/rq1_reading_cmono.R
+rq1_reading_cnmt	analysis/rq1/reading_profile/rq1_reading_cnmt.R
+rq1_reading_joint	analysis/rq1/reading_profile/rq1_reading_joint.R
+rq2_joint	analysis/rq2/rq2_joint_maximal.R
+rq2_joint_stoplight	analysis/rq2/rq2_joint_maximal.R	--include-stoplight=true
+rq2_interaction_cv	analysis/rq2/rq2_interaction_kfold.R
+rq2_stage_sigma	analysis/rq2/robustness/rq2_stage_sigma_sensitivity.R
+rq3_cv	analysis/rq3/rq3_kfold_elpd.R
+rq3_coefficient_long_refit	analysis/rq3/rq3_coefficient_long_refit.R
