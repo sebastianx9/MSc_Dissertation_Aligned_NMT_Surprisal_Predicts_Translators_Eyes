@@ -30,24 +30,26 @@ GPT-2 monolingual surprisal (`c_mono`) and six attention-derived features, exami
 ## Repository layout
 
 ```text
-analysis/
-  shared/                 fold, clustering, hashing, and sensitivity helpers
-  rq1/                    RQ1 primary models
-    reading_profile/      supplementary oral-reading comparisons
-    robustness/           alignment-mass/stoplight and within-between checks
-  rq2/                    pooled stage model and interaction CV
-    robustness/           stage-specific residual-scale check
-  rq3/                    outcome-profile models and long coefficient refits
-  figures/                result figures used in the dissertation
-  characterisation/       copy screening, POS summaries, and word examples
-extraction/
-  eye_tracking/           trial-level line correction and eye measures
-  predictors/             NMT, GPT-2, alignment-mass, and attention features
-  figures/                stimulus and model-mechanism illustrations
-config/                    analysis registry and documented copy-error scan
-hpc/                      CSF3 installation, checking, fitting, and diagnostics
-tests/                    extraction, design, registry, and submission tests
-assets/fonts/             pinned Free Sans Bold font used for word regions
+.
+├── analysis/                       # Statistical analyses
+│   ├── shared/                     # Folds, clustering, hashing, and sensitivity helpers
+│   ├── rq1/                        # RQ1 primary models
+│   │   ├── reading_profile/        # Supplementary oral-reading comparisons
+│   │   └── robustness/             # Alignment-mass, stoplight, and within–between checks
+│   ├── rq2/                        # Pooled stage model and interaction CV
+│   │   └── robustness/             # Stage-specific residual-scale check
+│   ├── rq3/                        # Outcome profiles and long coefficient refits
+│   ├── figures/                    # Dissertation result figures
+│   └── characterisation/           # Copy screening, POS summaries, and word examples
+├── extraction/
+│   ├── eye_tracking/               # Line correction and eye-movement measures
+│   ├── predictors/                 # NMT, GPT-2, alignment-mass, and attention predictors
+│   └── figures/                    # Stimulus and model-mechanism illustrations
+├── config/                         # Analysis registry and documented copy-error checks
+├── hpc/                            # CSF3 setup, model fitting, and diagnostics
+├── tests/                          # Extraction, design, registry, and submission tests
+└── assets/
+    └── fonts/                      # Pinned Free Sans Bold font for word-region figures
 ```
 
 ## Frozen inputs
