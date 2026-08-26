@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract soft-aligned NMT surprisal and effective alignment mass.
+"""Extract source-aligned NMT surprisal and effective alignment mass.
 
 For target token t and source word w, a_t,w is final-layer cross-attention
 averaged over heads, summed over the source subwords of w, and normalised over
