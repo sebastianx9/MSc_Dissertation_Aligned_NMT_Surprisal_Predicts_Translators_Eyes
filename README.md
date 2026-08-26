@@ -71,17 +71,18 @@ subtlex_us.csv
 MANIFEST.sha256
 ```
 
-The final line-corrected derived files contain 19,857 fixated-word rows from
+The final line-corrected files contain 19,857 fixated-word rows from
 40 participants: 10,751 oral-reading rows and 9,106 sight-translation rows.
-After the common predictor and artefact exclusions, the analysis samples are
-9,047 rows for RQ1/RQ3 and 19,732 rows for pooled RQ2; go-past and conditional
-RRT use 4,851 and 4,789 rows, respectively.
+After the common predictor and artefact exclusions, the analysis samples
+contain 9,047 rows for RQ1/RQ3 and 19,732 rows for pooled RQ2; the go-past and
+conditional-RRT analyses use 4,851 and 4,789 rows, respectively.
 
-P38 has no released gaze samples. P10 and P14 have raw samples but no
-trial-stage with sufficient sentence-wide evidence for reliable word mapping.
-S031/S032 remain distinct sentence random-effect levels but form one
-sentence-template fold and inference cluster because they are near-duplicate
-items. A matched sensitivity analysis excludes both.
+P38 has no released gaze samples. P10 and P14 have raw gaze samples, but none
+of their trial-stage recordings provides sufficient sentence-wide coverage
+for reliable word mapping. S031 and S032 remain distinct sentence
+random-effect levels but form one sentence-template fold and inference cluster
+because they are near-duplicate items. A matched leave-pair-out sensitivity
+analysis excludes both.
 
 ## Feature extraction
 
