@@ -1,7 +1,7 @@
 """
-Compute soft-aligned NMT surprisal (c_nmt) for English source words.
+Compute source-aligned NMT surprisal (c_nmt) for English source words.
 
-Soft-aligned surprisal for source word w:
+Source-aligned surprisal for source word w:
   c_soft(w) = sum_t  s_t * ( word_attn[t,w] / sum_j word_attn[t,j] )
 
 Each target token's surprisal is distributed across all source words
