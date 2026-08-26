@@ -30,7 +30,7 @@ GPT-2 monolingual surprisal (`c_mono`) and six attention-derived features, exami
 ## Repository layout
 
 ```text
-.
+
 ├── analysis/                       # Statistical analyses
 │   ├── shared/                     # Folds, clustering, hashing, and sensitivity helpers
 │   ├── rq1/                        # RQ1 primary models
