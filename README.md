@@ -52,9 +52,11 @@ GPT-2 monolingual surprisal (`c_mono`) and six attention-derived features, exami
     └── fonts/                      # Pinned Free Sans Bold font for word-region figures
 ```
 
-## Frozen inputs
 
-The EMMT corpus is not redistributed. The final input snapshot contains:
+## Analysis inputs and sample derivation
+
+The EMMT corpus is not redistributed in this repository. After data
+extraction, the analysis expects the following derived files:
 
 ```text
 attention_features_6_norm.csv
