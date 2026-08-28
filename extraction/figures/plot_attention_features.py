@@ -105,7 +105,7 @@ for r, ti in enumerate(keep):
 BW = words.index("blowing")
 
 # ── Plot ──────────────────────────────────────────────────────────────────
-fig, (axL, axR) = plt.subplots(1, 2, figsize=(11, 5.2),
+fig, (axL, axR) = plt.subplots(1, 2, figsize=(11, 6.5),
                                gridspec_kw={"width_ratios": [1.15, 1]})
 
 # Three distinct highlight colours (Okabe-Ito), each contrasting its heatmap.
@@ -116,43 +116,43 @@ SELF_C  = "#009E73"   # diagonal cell: bluish green
 
 # Left: encoder self-attention (Blues heatmap)
 imL = axL.imshow(self_mat, cmap="Blues", vmin=0, vmax=self_mat.max())
-axL.set_xticks(range(n)); axL.set_xticklabels(labels_enc, rotation=45, ha="left", fontsize=8)
-axL.set_yticks(range(n)); axL.set_yticklabels(labels_enc, fontsize=8)
+axL.set_xticks(range(n)); axL.set_xticklabels(labels_enc, rotation=45, ha="left", fontsize=12)
+axL.set_yticks(range(n)); axL.set_yticklabels(labels_enc, fontsize=12)
 axL.xaxis.set_ticks_position("top"); axL.xaxis.set_label_position("top")
-axL.set_xlabel("key (attended-to word)", fontsize=9)
-axL.set_ylabel("query (attending word)", fontsize=9)
+axL.set_xlabel("key (attended-to word)", fontsize=13)
+axL.set_ylabel("query (attending word)", fontsize=13)
 # highlight blowing's row (outgoing) and column (incoming)
 axL.add_patch(Rectangle((-0.5, BW-0.5), n, 1, fill=False, edgecolor=ROW_C, lw=2.2))
 axL.add_patch(Rectangle((BW-0.5, -0.5), 1, n, fill=False, edgecolor=COL_C, lw=2.2))
 axL.add_patch(Rectangle((BW-0.5, BW-0.5), 1, 1, fill=False,
                         edgecolor=SELF_C, lw=2.5))
-axL.annotate("blowing's row:\n$f_e$ = context cells; $f_\\mathrm{eos}$ = </s> cell\n$H_e$ = entropy of this row",
-             xy=(n-0.5, BW), xytext=(n+0.6, BW-2.4), fontsize=8, color=ROW_C,
+axL.annotate("blowing's row:\n$f_e$: context cells\n$f_\\mathrm{eos}$: </s> cell\n$H_e$: row entropy",
+             xy=(n-0.5, BW), xytext=(n+0.6, BW-2.4), fontsize=14.5, color=ROW_C,
              ha="left", va="center",
-             arrowprops=dict(arrowstyle="->", color=ROW_C))
-axL.annotate("$f_\\mathrm{self}$ = diagonal cell",
-             xy=(BW, BW), xytext=(n+0.6, BW+1.1), fontsize=8,
+             arrowprops=dict(arrowstyle="->", color=ROW_C, linewidth=1.4))
+axL.annotate("$f_\\mathrm{self}$:\ndiagonal cell",
+             xy=(BW, BW), xytext=(n+0.6, BW+1.1), fontsize=14.5,
              color=SELF_C, ha="left", va="center",
-             arrowprops=dict(arrowstyle="->", color=SELF_C))
-axL.annotate("blowing's column:\n$f_\\mathrm{recv}$ (received\nfrom context)",
-             xy=(BW, n-0.5), xytext=(BW+1.2, n+1.3), fontsize=8, color=COL_C,
+             arrowprops=dict(arrowstyle="->", color=SELF_C, linewidth=1.4))
+axL.annotate("blowing's column:\n$f_\\mathrm{recv}$: received\nfrom context",
+             xy=(BW, n-0.5), xytext=(BW+1.2, n+1.3), fontsize=14.5, color=COL_C,
              ha="left", va="top",
-             arrowprops=dict(arrowstyle="->", color=COL_C))
-axL.set_title("Encoder self-attention", fontsize=12, fontweight="bold", pad=30)
+             arrowprops=dict(arrowstyle="->", color=COL_C, linewidth=1.4))
+axL.set_title("Encoder self-attention", fontsize=16.5, fontweight="bold", pad=34)
 
 # Right: cross-attention (Greens heatmap)
 imR = axR.imshow(cross_word, cmap="Greens", vmin=0, vmax=cross_word.max())
-axR.set_xticks(range(len(words))); axR.set_xticklabels(words, rotation=45, ha="left", fontsize=8)
-axR.set_yticks(range(len(cs_labels))); axR.set_yticklabels(cs_labels, fontsize=8)
+axR.set_xticks(range(len(words))); axR.set_xticklabels(words, rotation=45, ha="left", fontsize=12)
+axR.set_yticks(range(len(cs_labels))); axR.set_yticklabels(cs_labels, fontsize=12)
 axR.xaxis.set_ticks_position("top"); axR.xaxis.set_label_position("top")
-axR.set_xlabel("English source word", fontsize=9)
-axR.set_ylabel("Czech target token", fontsize=9)
+axR.set_xlabel("English source word", fontsize=13)
+axR.set_ylabel("Czech target token", fontsize=13)
 axR.add_patch(Rectangle((BW-0.5, -0.5), 1, len(cs_labels), fill=False, edgecolor=CROSS_C, lw=2.2))
-axR.annotate("blowing's column:\n$f_\\mathrm{cross}$ (attention target\ntokens send to blowing)",
+axR.annotate("blowing's column:\n$f_\\mathrm{cross}$: target-to-source\nattention",
              xy=(BW, len(cs_labels)-0.5), xytext=(BW+1.0, len(cs_labels)+1.0),
-             fontsize=8, color=CROSS_C, ha="left", va="top",
-             arrowprops=dict(arrowstyle="->", color=CROSS_C))
-axR.set_title("Cross-attention", fontsize=12, fontweight="bold", pad=30)
+             fontsize=14.5, color=CROSS_C, ha="left", va="top",
+             arrowprops=dict(arrowstyle="->", color=CROSS_C, linewidth=1.4))
+axR.set_title("Cross-attention", fontsize=16.5, fontweight="bold", pad=34)
 
 fig.tight_layout()
 fig.savefig(args.output, bbox_inches="tight")
