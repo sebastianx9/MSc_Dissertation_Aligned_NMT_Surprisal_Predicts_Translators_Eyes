@@ -1,4 +1,4 @@
-# Source-aligned NMT surprisal Predicts Translators Eyes 
+# Source-Aligned NMT Surprisal Predicts Translators' Eyes 
 
 Code for an MSc dissertation examining whether neural machine translation
 (NMT) signals can yield a signal to predict English source-word viewing during English-to-Czech
