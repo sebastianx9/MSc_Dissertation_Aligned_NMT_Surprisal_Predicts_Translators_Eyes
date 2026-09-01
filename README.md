@@ -1,7 +1,5 @@
 # Source-Aligned NMT Surprisal Predicts Translators' Eye Movements
 
-Student ID:11479116
-
 Code for an MSc dissertation examining whether neural machine translation
 (NMT) signals can predict English source-word viewing during English-to-Czech
 sight translation. Eye-tracking data come from the EMMT corpus
@@ -391,3 +389,8 @@ for file in hpc/*.sh hpc/*.sbatch; do
   bash -n "$file" || exit 1
 done
 ```
+## Author
+
+University of Manchester MSc dissertation  
+Student ID: 11479116
+
